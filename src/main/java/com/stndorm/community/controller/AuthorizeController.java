@@ -62,6 +62,7 @@ public class AuthorizeController {
             user1.setName(user.getName());
             user1.setGmtCreate(System.currentTimeMillis());
             user1.setGmtModified(user1.getGmtCreate());
+            user1.setAvatarUrl(user.getAvatar_url());
             userMapper.insert(user1);
             //登录成功，写cookie和session
             //手动写入cookie,上面插入到数据库中就相当于写session
