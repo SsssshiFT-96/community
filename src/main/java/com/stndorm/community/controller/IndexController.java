@@ -1,5 +1,6 @@
 package com.stndorm.community.controller;
 
+import com.stndorm.community.dto.PaginationDTO;
 import com.stndorm.community.dto.QuestionDTO;
 import com.stndorm.community.mapper.QuestionMapper;
 import com.stndorm.community.mapper.UserMapper;
@@ -28,7 +29,9 @@ public class IndexController {
 
     @GetMapping("/")
     public String hello(HttpServletRequest request,
-                        Model model){
+                        Model model,
+                        @RequestParam(name="page", defaultValue = "1")Integer page,
+                        @RequestParam(name="size", defaultValue = "2")Integer size){
         //获取cookie,并判断是否存在token，若存在则从数据库中查询用户
         Cookie[] cookies = request.getCookies();
         if(cookies != null && cookies.length != 0){
@@ -43,8 +46,8 @@ public class IndexController {
                 }
             }
         }
-        List<QuestionDTO> questionList = questionService.selectQuestionDTOs();
-        model.addAttribute("questions",questionList);
+        PaginationDTO pagination = questionService.selectQuestionDTOs(page,size);
+        model.addAttribute("pagination",pagination);
 
         return "index";
     }

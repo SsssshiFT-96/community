@@ -1,5 +1,6 @@
 package com.stndorm.community.service;
 
+import com.stndorm.community.dto.PaginationDTO;
 import com.stndorm.community.dto.QuestionDTO;
 import com.stndorm.community.mapper.QuestionMapper;
 import com.stndorm.community.mapper.UserMapper;
@@ -23,9 +24,24 @@ public class QuestionService {
     @Autowired
     UserMapper userMapper;
 
-    public List<QuestionDTO> selectQuestionDTOs() {
-        List<Question> questions = questionMapper.selectQuestions();
+    public PaginationDTO selectQuestionDTOs(Integer page, Integer size) {
+        PaginationDTO paginationDTO = new PaginationDTO();
+        //获取文章总数
+        Integer totalCount = questionMapper.count();
+        //对paginationDTO进行赋值
+        paginationDTO.setPagination(totalCount, page, size);
+        //判断请求参数page是否合规，不合规就使它变为边界值
+        if(page < 1) page = 1;
+        if(page > paginationDTO.getTotalPage())
+            page = paginationDTO.getTotalPage();
+
+        //偏移量计算
+        Integer offset = size * (page - 1);
+
+        List<Question> questions = questionMapper.selectQuestions(offset, size);
         List<QuestionDTO> questionDTOList = new ArrayList<>();
+
+
         for(Question question : questions){
             User user = userMapper.findById(question.getCreator());
             //利用该方法可以将一个对象的属性复制到另一个对象的属性
@@ -34,6 +50,8 @@ public class QuestionService {
             questionDTO.setUser(user);
             questionDTOList.add(questionDTO);
         }
-        return questionDTOList;
+        paginationDTO.setQuestions(questionDTOList);
+
+        return paginationDTO;
     }
 }
