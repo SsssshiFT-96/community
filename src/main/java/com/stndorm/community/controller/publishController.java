@@ -1,12 +1,15 @@
 package com.stndorm.community.controller;
 
+import com.stndorm.community.dto.QuestionDTO;
 import com.stndorm.community.mapper.QuestionMapper;
 import com.stndorm.community.model.Question;
 import com.stndorm.community.model.User;
+import com.stndorm.community.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -17,7 +20,20 @@ import javax.servlet.http.HttpServletRequest;
 public class publishController {
 
     @Autowired
-    private QuestionMapper questionMapper;
+    private QuestionService questionService;
+
+    //编辑功能
+    @GetMapping("publish/{id}")
+    public String edit(@PathVariable(name = "id")Integer id,
+                       Model model){
+        //通过id获得question信息将其回显至页面上
+        QuestionDTO question = questionService.getById(id);
+        model.addAttribute("title", question.getTitle());
+        model.addAttribute("description", question.getDescription());
+        model.addAttribute("tag", question.getTag());
+        model.addAttribute("id", question.getId());
+        return "publish";
+    }
 
     //使用get就渲染页面
     @GetMapping("/publish")
@@ -30,6 +46,7 @@ public class publishController {
     public String doPublish(@RequestParam("title") String title,
                             @RequestParam("description") String description,
                             @RequestParam("tag") String tag,
+                            @RequestParam("id") Integer id,
                             HttpServletRequest request,
                             Model model){
         //保存之前写的内容
@@ -56,15 +73,17 @@ public class publishController {
             model.addAttribute("error","用户不存在");
             return "publish";
         }
-        //创建question对象，将发布的文章信息传入，并保存至数据库中
+        //创建question对象，将发布的问题信息传入，并保存至数据库中
         Question question = new Question();
         question.setCreator(user.getId());
         question.setDescription(description);
         question.setTitle(title);
         question.setTag(tag);
-        question.setGmtCreate(System.currentTimeMillis());
-        question.setGmtModified(question.getGmtCreate());
-        questionMapper.create(question);
+        //将id作为唯一标识判断该问题新建还是已有。若为新建，则id传入的是空值
+        question.setId(id);
+
+        questionService.createOrUpdate(question);
+//        questionMapper.create(question);
 
         //发布成功就返回首页
         return "redirect:/";
