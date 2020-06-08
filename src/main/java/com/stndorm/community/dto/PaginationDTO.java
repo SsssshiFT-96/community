@@ -23,15 +23,8 @@ public class PaginationDTO {
 
     private List<Integer> pages = new ArrayList<>();
 
-    public void setPagination(Integer totalCount, Integer page, Integer size) {
-        //判断总共有几页
-        if(totalCount % size == 0){
-            totalPage = totalCount / size;
-        }else{
-            totalPage = totalCount / size + 1;
-        }
-        if(page < 1) page = 1;
-        if(page > totalPage) page = totalPage;
+    public void setPagination(Integer totalPage, Integer page) {
+        this.totalPage = totalPage;
         this.page = page;
         /*
         设置底下页码显示多少数字
