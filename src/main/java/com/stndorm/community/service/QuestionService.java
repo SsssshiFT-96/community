@@ -133,4 +133,10 @@ public class QuestionService {
             questionMapper.update(question);
         }
     }
+
+    public void incView(Integer id) {
+        Question updateQuestion = new Question();
+        updateQuestion.setViewCount(1);
+        questionMapper.updateViewCount(updateQuestion.getViewCount(), id);
+    }
 }

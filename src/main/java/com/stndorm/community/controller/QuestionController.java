@@ -21,6 +21,8 @@ public class QuestionController {
                            Model model){
         //到数据库中查询该question的id是否存在
         QuestionDTO questionDTO = questionService.getById(id);
+        //点击就累加阅读数
+        questionService.incView(id);
         model.addAttribute("question", questionDTO);
         return "question";
     }
