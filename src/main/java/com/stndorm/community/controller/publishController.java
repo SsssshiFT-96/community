@@ -1,7 +1,6 @@
 package com.stndorm.community.controller;
 
 import com.stndorm.community.mapper.QuestionMapper;
-import com.stndorm.community.mapper.UserMapper;
 import com.stndorm.community.model.Question;
 import com.stndorm.community.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.Cookie;
+
 import javax.servlet.http.HttpServletRequest;
 
 @Controller
@@ -19,9 +18,6 @@ public class publishController {
 
     @Autowired
     private QuestionMapper questionMapper;
-
-    @Autowired
-    private UserMapper userMapper;
 
     //使用get就渲染页面
     @GetMapping("/publish")
@@ -54,20 +50,7 @@ public class publishController {
             return "publish";
         }
         //获取user信息
-        User user = null;
-        Cookie[] cookies = request.getCookies();
-        if(cookies != null && cookies.length != 0){
-            for (Cookie cookie: cookies) {
-                if(cookie.getName().equals("token")){
-                    String token = cookie.getValue();
-                    user = userMapper.findByToken(token);
-                    if(user != null){
-                        request.getSession().setAttribute("user",user);
-                    }
-                    break;
-                }
-            }
-        }
+        User user = (User)request.getSession().getAttribute("user");
         //如果user不存在，就传入错误信息
         if(user == null) {
             model.addAttribute("error","用户不存在");
