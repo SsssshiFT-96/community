@@ -1,5 +1,6 @@
 package com.stndorm.community.mapper;
 
+import com.stndorm.community.dto.QuestionDTO;
 import com.stndorm.community.model.Question;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
@@ -31,4 +32,7 @@ public interface QuestionMapper {
 
     @Select("select count(1) from questions where creator = #{userId}")
     Integer countByUserId(@Param(value = "userId") Integer userId);
+
+    @Select("select * from questions where id = #{id}")
+    Question getById(@Param(value = "id") Integer id);
 }

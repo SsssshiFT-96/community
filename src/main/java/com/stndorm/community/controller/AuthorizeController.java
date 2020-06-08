@@ -5,6 +5,7 @@ import com.stndorm.community.dto.GithubUser;
 import com.stndorm.community.mapper.UserMapper;
 import com.stndorm.community.model.User;
 import com.stndorm.community.provider.GithubProvider;
+import com.stndorm.community.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.UUID;
 
@@ -32,8 +34,9 @@ public class AuthorizeController {
     @Value("${github.client.secret}")
     private String ClientSecret;
 
+
     @Autowired
-    private UserMapper userMapper;
+    private UserService userService;
 
     @GetMapping("/callback")
     public String callback(@RequestParam(name="code")String code,
@@ -51,7 +54,7 @@ public class AuthorizeController {
         String accessToken = githubProvider.getAccessToken(accessTokenDTO);
         //获取user信息
         GithubUser user = githubProvider.getUser(accessToken);
-        System.out.println(user.getId());
+//        System.out.println(user.getId());
 
         if(user != null){
             //将登录的用户存入数据库中
@@ -60,10 +63,10 @@ public class AuthorizeController {
             user1.setToken(token);
             user1.setAccountId(String.valueOf(user.getId()));
             user1.setName(user.getName());
-            user1.setGmtCreate(System.currentTimeMillis());
-            user1.setGmtModified(user1.getGmtCreate());
             user1.setAvatarUrl(user.getAvatar_url());
-            userMapper.insert(user1);
+            //判断数据库中是否有该user，有就更新，没有就存入
+            userService.createOrUpdate(user1);
+//            userMapper.insert(user1);
             //登录成功，写cookie和session
             //手动写入cookie,上面插入到数据库中就相当于写session
             response.addCookie(new Cookie("token", token));
@@ -74,5 +77,17 @@ public class AuthorizeController {
             //登录失败，重新登录
             return "redirect:/";
         }
+    }
+
+    @GetMapping("/logout")
+    public String logout(HttpServletRequest request,
+                         HttpServletResponse response){
+        //退出登录时删除session中的user信息
+        request.getSession().removeAttribute("user");
+        //退出登录时删除cookie中的token信息，通过新建一个同名cookie完成
+        Cookie cookie = new Cookie("token", null);
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
+        return "redirect:/";
     }
 }

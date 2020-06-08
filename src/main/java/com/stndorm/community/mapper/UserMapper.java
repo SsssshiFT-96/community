@@ -1,10 +1,7 @@
 package com.stndorm.community.mapper;
 
 import com.stndorm.community.model.User;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 @Mapper
 public interface UserMapper {
@@ -15,6 +12,12 @@ public interface UserMapper {
     @Select("select * from users where token = #{token}")
     User findByToken(@Param("token") String token);
 
-    @Select("select * from users where id = #{creator}")
-    User findById(Integer creator);
+    @Select("select * from users where id = #{id}")
+    User findById(@Param("id")Integer id);
+
+    @Select("select * from users where account_id = #{accountId}")
+    User findByAccountId(@Param("accountId")String accountId);
+
+    @Update("update users set name=#{name},token=#{token},gmt_modified=#{gmtModified},avatar_url=#{avatarUrl} where id=#{id}")
+    void update(User user);
 }
