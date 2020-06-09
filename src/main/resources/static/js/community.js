@@ -1,3 +1,6 @@
+/**
+ * 提交回复
+ */
 function post(){
     /*获取id值和内容*/
     var questionId = $("#question_id").val();
@@ -40,5 +43,34 @@ function post(){
             console.log(response);
         },
         dataType: "json"
+        
     });
+
+}
+
+
+/**
+ * 展开二级评论
+ */
+function collapseComments(e) {
+    var id = e.getAttribute("data-id");
+    //获取要展开的div的id
+    var comments = $("#comment-" + id);
+    //获取一下二级评论按钮的展开状态
+    var collapse = e.getAttribute("data-collapse");
+    //如果存在就关闭二级评论
+    if(collapse){
+        //该方法会为备选属性移除一个或多个class属性。
+        comments.removeClass("in");
+        //移除二级评论状态
+        e.removeAttribute("data-collapse");
+        e.classList.remove("active");
+    }else{
+        //该方法会为备选属性添加一个或多个class属性，而不会移除其他。
+        //为那个要展开的div添加in的class属性，使其展开，也就是二级评论展开
+        comments.addClass("in");
+        //标记二级评论状态
+        e.setAttribute("data-collapse","in");
+        e.classList.add("active");
+    }
 }
