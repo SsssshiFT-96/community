@@ -15,7 +15,7 @@ public interface QuestionMapper {
 //    @Select("select * from questions")
 //    List<Question> selectQuestions();
 
-    @Select("select * from questions limit #{offset}, #{size}")
+    @Select("select * from questions ORDER BY gmt_create DESC limit #{offset}, #{size}")
     List<Question> selectQuestions(@Param(value = "offset") Integer offset,
                                    @Param(value = "size") Integer size);
 
@@ -41,4 +41,7 @@ public interface QuestionMapper {
 
     @Update("update questions set comment_count=comment_count + #{commentCount} where id = #{id}")
     void updateCommentCount(Question question);
+
+
+
 }

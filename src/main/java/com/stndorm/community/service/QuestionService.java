@@ -12,8 +12,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * 起到一个组装的作用，当同时需要UserMapper和QuestionMapper时，就需要该层
@@ -60,6 +59,7 @@ public class QuestionService {
             questionDTO.setUser(user);
             questionDTOList.add(questionDTO);
         }
+
         paginationDTO.setQuestions(questionDTOList);
 
         return paginationDTO;
