@@ -15,6 +15,9 @@ body{
     width: 40px;
     height: 40px;
 }
+.media-body{
+    padding-top: 12px;
+}
 
 .text-desc{
     font-size: 12px;
@@ -22,12 +25,22 @@ body{
     color: #999999;
 }
 .profile.section{
+
     margin-top: 15px;
 }
 .community-menu{
     color: #999999;
     font-size: 13px;
 }
+
 .jumbotron{
     margin: 50px;
+}
+
+.comment{
+    margin: 10px 0;
+}
+.comment-btn{
+    float: right;
+    margin-bottom: 10px;
 }

@@ -9,7 +9,7 @@ import org.apache.ibatis.annotations.Select;
 @Mapper
 public interface CommentMapper {
 
-    @Insert("insert into comments (parent_id,`type`,commentator,gmt_create,gmt_modified,content) values (#{parentId},#{type},#{commentator},#{gmtCreate},#{gmtModified},#{content}")
+    @Insert("insert into comments (parent_id,`type`,commentator,gmt_create,gmt_modified,content) values (#{parentId},#{type},#{commentator},#{gmtCreate},#{gmtModified},#{content})")
     void insert(Comment comment);
 
     @Select("select * from comments where id = #{id}")
