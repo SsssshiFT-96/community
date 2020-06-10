@@ -43,6 +43,15 @@ body{
 .question-tupian{
     width: 100%;
 }
+.publish-select-tag{
+    display: none;
+    margin-top: 10px;
+    padding-top: 10px;
+}
+.publish-select-tag .label-warning{
+    margin-right: 10px;
+}
+
 .community-menu{
     display: block;
     color: #999999;

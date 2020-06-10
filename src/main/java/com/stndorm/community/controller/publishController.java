@@ -1,10 +1,12 @@
 package com.stndorm.community.controller;
 
+import com.stndorm.community.cache.TagCache;
 import com.stndorm.community.dto.QuestionDTO;
 import com.stndorm.community.mapper.QuestionMapper;
 import com.stndorm.community.model.Question;
 import com.stndorm.community.model.User;
 import com.stndorm.community.service.QuestionService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,12 +34,14 @@ public class publishController {
         model.addAttribute("description", question.getDescription());
         model.addAttribute("tag", question.getTag());
         model.addAttribute("id", question.getId());
+        model.addAttribute("tags", TagCache.get());
         return "publish";
     }
 
     //使用get就渲染页面
     @GetMapping("/publish")
-    public String publish(){
+    public String publish(Model model){
+        model.addAttribute("tags", TagCache.get());
         return "publish";
     }
 
@@ -53,6 +57,7 @@ public class publishController {
         model.addAttribute("title", title);
         model.addAttribute("description", description);
         model.addAttribute("tag", tag);
+        model.addAttribute("tags", TagCache.get());
         //校验输入内容是否合规
         if(title == null || title == ""){
             model.addAttribute("error","标题不能为空");
@@ -64,6 +69,12 @@ public class publishController {
         }
         if(tag == null || tag == ""){
             model.addAttribute("error","标签不能为空");
+            return "publish";
+        }
+        //判断输入的标签是否合规
+        String invalid = TagCache.filterInvalid(tag);
+        if(StringUtils.isNotBlank(invalid)){
+            model.addAttribute("error","输入非法标签：" + invalid);
             return "publish";
         }
         //获取user信息

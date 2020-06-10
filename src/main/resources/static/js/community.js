@@ -140,3 +140,24 @@ function collapseComments(e) {
         }
     }
 }
+
+//展示SelectTag
+function showSelectTag() {
+    $("#select-tag").show();
+}
+
+//点击标签，使之写到上面的input上去
+function selectTag(e) {
+    var value = e.getAttribute("data-tag")
+    //获取未点击之前文本框中的内容
+    var previous = $("#tag").val();
+    //判断文本框中标签是否有了要点的标签，有就不用添加。
+    if(previous.indexOf(value) == -1){
+        if(previous){
+            $("#tag").val(previous + ',' + value);
+        }else{
+            $("#tag").val(value);
+        }
+    }
+
+}
