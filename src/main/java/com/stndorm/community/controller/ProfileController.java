@@ -1,9 +1,7 @@
 package com.stndorm.community.controller;
 
-import com.stndorm.community.dto.NotificationDTO;
 import com.stndorm.community.dto.PaginationDTO;
 
-import com.stndorm.community.model.Notification;
 import com.stndorm.community.model.User;
 import com.stndorm.community.service.NotificationService;
 import com.stndorm.community.service.QuestionService;
@@ -15,7 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
+
 
 @Controller
 public class ProfileController {
