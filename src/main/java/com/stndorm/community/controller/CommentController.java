@@ -1,7 +1,9 @@
 package com.stndorm.community.controller;
 
 import com.stndorm.community.dto.CommentDTO;
+import com.stndorm.community.dto.CommentDTOFromDB;
 import com.stndorm.community.dto.ResultDTO;
+import com.stndorm.community.emus.CommentTypeEnum;
 import com.stndorm.community.exception.CustomizeErrorCode;
 import com.stndorm.community.mapper.CommentMapper;
 import com.stndorm.community.model.Comment;
@@ -10,13 +12,11 @@ import com.stndorm.community.service.CommentService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -46,5 +46,13 @@ public class CommentController {
         comment.setCommentator(user.getId());
         commentService.insert(comment);
         return ResultDTO.okOf();
+    }
+
+    @ResponseBody
+    @RequestMapping(value="/comment/{id}", method= RequestMethod.GET)
+    public ResultDTO<List<CommentDTOFromDB>> comments(@PathVariable(name="id")Integer id){
+        List<CommentDTOFromDB> commentDTOFromDBS =
+                commentService.selectListByQuestionId(id, CommentTypeEnum.COMMENT);
+        return ResultDTO.okOf(commentDTOFromDBS);
     }
 }

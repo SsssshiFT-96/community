@@ -3,6 +3,7 @@ package com.stndorm.community.controller;
 import com.stndorm.community.dto.CommentDTO;
 import com.stndorm.community.dto.CommentDTOFromDB;
 import com.stndorm.community.dto.QuestionDTO;
+import com.stndorm.community.emus.CommentTypeEnum;
 import com.stndorm.community.mapper.QuestionMapper;
 import com.stndorm.community.model.Question;
 import com.stndorm.community.service.CommentService;
@@ -30,7 +31,8 @@ public class QuestionController {
         //到数据库中查询该question的id是否存在
         QuestionDTO questionDTO = questionService.getById(id);
         //通过问题id获取评论
-        List<CommentDTOFromDB> CommentDTOFromDBs = commentService.selectListByQuestionId(id);
+        List<CommentDTOFromDB> CommentDTOFromDBs =
+                commentService.selectListByQuestionId(id, CommentTypeEnum.QUESTION);
 
 
         //点击就累加阅读数

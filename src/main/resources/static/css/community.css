@@ -71,9 +71,17 @@ button.btn.btn-success.comment-btn.pull-right{
     margin-top: 5px;
 }
 span.icon {
-    margin-right: 6px;
+    margin-right: 5px;
     font-size: 15px;
     cursor: pointer;
+}
+span.comment-icon {
+    margin-right: 5px;
+    font-size: 15px;
+    cursor: pointer;
+}
+span.comment-icon:hover{
+    color: #5cb85c;
 }
 span.active {
     color: #5cb85c;

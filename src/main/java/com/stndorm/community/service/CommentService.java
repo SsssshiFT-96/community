@@ -51,6 +51,9 @@ public class CommentService {
                 throw new CustomizeException((CustomizeErrorCode.COMMENT_NOT_FOUND));
             }
             commentMapper.insert(comment);
+            //更新评论数
+            dbComment.setCommentCount(1L);
+            commentMapper.updateCommentCount(dbComment);
         }else{
             //回复问题
             Question question = questionMapper.getById(comment.getParentId());
@@ -64,9 +67,8 @@ public class CommentService {
         }
     }
 
-    public List<CommentDTOFromDB> selectListByQuestionId(Integer id) {
-        Integer type = 1;
-        List<Comment> comments = commentMapper.selectByParentIdAndType(id, type);
+    public List<CommentDTOFromDB> selectListByQuestionId(Integer id, CommentTypeEnum type) {
+        List<Comment> comments = commentMapper.selectByParentIdAndType(id, type.getType());
         if(comments.size() == 0){
             return new ArrayList<>();
         }

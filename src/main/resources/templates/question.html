@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="/css/community.css">
     <script src="/js/jquery-3.5.1.min.js"></script>
     <script src="/js/bootstrap.min.js" type="application/javascript"></script>
+    <script src="/js/moment.js" type="application/javascript"></script>
     <script src="/js/community.js" type="application/javascript"></script>
 </head>
 <body>
@@ -51,7 +52,7 @@
                                 <img class="media-object img-circle"  src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1591516733853&di=6f72ea28ae69a71ce037b3a43df412dc&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201812%2F25%2F20181225102434_fsilt.thumb.400_0.jpg">
                             </a>
                         </div>
-                        <div class="media-body">
+                        <div class="media-body" th:id="${'comment-body-'+comment.id}">
                             <h6 class="media-heading">
                                 <span th:text="${comment.user.name}"></span>
                             </h6>
@@ -59,18 +60,22 @@
                             <div class="menu">
                                 <span class="glyphicon glyphicon-heart icon"></span>
                                 <!--点击获取该评论回复的id-->
-                                <span class="glyphicon glyphicon-comment icon" th:data-id="${comment.id}"
-                                      onclick="collapseComments(this)"></span>
+                                <span th:data-id="${comment.id}"
+                                      onclick="collapseComments(this)"class="comment-icon">
+                                    <span class="glyphicon glyphicon-comment"></span>
+                                    <span th:text="${comment.commentCount}"></span>
+                                </span>
                                 <span class="pull-right" th:text="${#dates.format(comment.getGmtCreate(),'yyyy-MM-dd')}"></span>
                             </div>
                             <!--二级评论-->
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 collapse sub-comments"
                                  th:id="${'comment-'+comment.id}">
-                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 comments" th:each="comment: ${comments}">
+
+                                <!--<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 comments" th:each="comment: ${comments}">
                                     <div class="media">
                                         <div class="media-left">
                                             <a href="#">
-                                                <!--th:src="${comment.user.avatarUrl}"-->
+                                                &lt;!&ndash;th:src="${comment.user.avatarUrl}"&ndash;&gt;
                                                 <img class="media-object img-circle"  src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1591516733853&di=6f72ea28ae69a71ce037b3a43df412dc&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201812%2F25%2F20181225102434_fsilt.thumb.400_0.jpg">
                                             </a>
                                         </div>
@@ -86,10 +91,12 @@
 
                                         </div>
                                     </div>
-                                </div>
+                                </div>-->
+
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                    <input type="text" class="form-control" placeholder="评论一下...">
-                                    <button type="button" class="btn btn-success comment-btn pull-right" onclick="post()">评论</button>
+                                    <input type="text" class="form-control" placeholder="评论一下..." th:id="${'input-'+comment.id}">
+                                    <button type="button" class="btn btn-success comment-btn pull-right"
+                                            onclick="comment(this)" th:data-id="${comment.id}">评论</button>
                                 </div>
                             </div>
                         </div>

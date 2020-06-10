@@ -2,10 +2,8 @@ package com.stndorm.community.mapper;
 
 import com.stndorm.community.dto.CommentDTOFromDB;
 import com.stndorm.community.model.Comment;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import com.stndorm.community.model.Question;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -20,4 +18,7 @@ public interface CommentMapper {
 
     @Select("select * from comments where parent_id = #{id} and `type` = #{type}")
     List<Comment> selectByParentIdAndType(Integer id, Integer type);
+
+    @Update("update comments set comment_count=comment_count + #{commentCount} where id = #{id}")
+    void updateCommentCount(Comment dbComment);
 }
