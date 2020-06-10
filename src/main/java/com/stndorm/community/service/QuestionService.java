@@ -1,5 +1,6 @@
 package com.stndorm.community.service;
 
+import com.fasterxml.jackson.databind.util.BeanUtil;
 import com.stndorm.community.dto.PaginationDTO;
 import com.stndorm.community.dto.QuestionDTO;
 import com.stndorm.community.exception.CustomizeErrorCode;
@@ -8,11 +9,13 @@ import com.stndorm.community.mapper.QuestionMapper;
 import com.stndorm.community.mapper.UserMapper;
 import com.stndorm.community.model.Question;
 import com.stndorm.community.model.User;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 起到一个组装的作用，当同时需要UserMapper和QuestionMapper时，就需要该层
@@ -138,5 +141,27 @@ public class QuestionService {
         Question updateQuestion = new Question();
         updateQuestion.setViewCount(1);
         questionMapper.updateViewCount(updateQuestion.getViewCount(), id);
+    }
+
+    public List<QuestionDTO> selectRelatedQ(QuestionDTO questionDTO) {
+        if(StringUtils.isBlank(questionDTO.getTag())){
+            return new ArrayList<>();
+        }
+        String[] tags = StringUtils.split((questionDTO.getTag()), ",");
+        //将标签变成“xx|xx|xx”的形式，这样sql可以用正则来获取相关问题
+        String regexpTag = Arrays.stream(tags).collect(Collectors.joining("|"));
+        Question question = new Question();
+        question.setId(questionDTO.getId());
+        question.setTag(regexpTag);
+        //获取相关问题
+        List<Question> questions = questionMapper.selectRelatedQ(question);
+        //将获取的问题存到questionDTOS中
+        List<QuestionDTO> questionDTOS = questions.stream().map(q -> {
+            QuestionDTO newQuestionDTO = new QuestionDTO();
+            BeanUtils.copyProperties(q,newQuestionDTO);
+            return newQuestionDTO;
+        }).collect(Collectors.toList());
+
+        return questionDTOS;
     }
 }

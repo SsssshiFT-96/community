@@ -30,6 +30,11 @@ public class QuestionController {
                            Model model){
         //到数据库中查询该question的id是否存在
         QuestionDTO questionDTO = questionService.getById(id);
+
+        //通过标签获取相关问题
+        List<QuestionDTO> relatedQuestions =
+                questionService.selectRelatedQ(questionDTO);
+
         //通过问题id获取评论
         List<CommentDTOFromDB> CommentDTOFromDBs =
                 commentService.selectListByQuestionId(id, CommentTypeEnum.QUESTION);
@@ -37,8 +42,10 @@ public class QuestionController {
 
         //点击就累加阅读数
         questionService.incView(id);
+
         model.addAttribute("question", questionDTO);
         model.addAttribute("comments", CommentDTOFromDBs);
+        model.addAttribute("relatedQuestions", relatedQuestions);
         return "question";
     }
 }
