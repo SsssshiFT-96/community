@@ -28,8 +28,8 @@ public class QuestionService {
     @Autowired
     UserMapper userMapper;
 
-    public PaginationDTO selectQuestionDTOs(Integer page, Integer size) {
-        PaginationDTO paginationDTO = new PaginationDTO();
+    public PaginationDTO<QuestionDTO> selectQuestionDTOs(Integer page, Integer size) {
+        PaginationDTO<QuestionDTO> paginationDTO = new PaginationDTO<>();
         Integer totalPage;
         //获取文章总数
         Integer totalCount = questionMapper.count();
@@ -63,13 +63,13 @@ public class QuestionService {
             questionDTOList.add(questionDTO);
         }
 
-        paginationDTO.setQuestions(questionDTOList);
+        paginationDTO.setData(questionDTOList);
 
         return paginationDTO;
     }
 
-    public PaginationDTO selectQuestionDTOsByUser(Integer userId, Integer page, Integer size) {
-        PaginationDTO paginationDTO = new PaginationDTO();
+    public PaginationDTO<QuestionDTO> selectQuestionDTOsByUser(Integer userId, Integer page, Integer size) {
+        PaginationDTO<QuestionDTO> paginationDTO = new PaginationDTO<>();
         Integer totalPage;
         //获取文章总数
         Integer totalCount = questionMapper.countByUserId(userId);
@@ -104,7 +104,7 @@ public class QuestionService {
             questionDTO.setUser(user);
             questionDTOList.add(questionDTO);
         }
-        paginationDTO.setQuestions(questionDTOList);
+        paginationDTO.setData(questionDTOList);
 
         return paginationDTO;
     }

@@ -2,6 +2,7 @@ package com.stndorm.community.interceptor;
 
 import com.stndorm.community.mapper.UserMapper;
 import com.stndorm.community.model.User;
+import com.stndorm.community.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -15,7 +16,10 @@ import javax.servlet.http.HttpServletResponse;
 public class SessionInterceptor implements HandlerInterceptor {
 
     @Autowired
-    UserMapper userMapper;
+    private UserMapper userMapper;
+
+    @Autowired
+    private NotificationService notificationService;
 
     //在请求执行之前获取cookie中的user
     @Override
@@ -28,6 +32,8 @@ public class SessionInterceptor implements HandlerInterceptor {
                     User user = userMapper.findByToken(token);
                     if(user != null){
                         request.getSession().setAttribute("user",user);
+                        Integer unreadCount = notificationService.unreadCount(user.getId());
+                        request.getSession().setAttribute("unreadCount",unreadCount);
                     }
                     break;
                 }

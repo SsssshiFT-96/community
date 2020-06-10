@@ -9,8 +9,8 @@ import java.util.List;
  * 用来封存页码信息
  */
 @Data
-public class PaginationDTO {
-    private List<QuestionDTO> questions;
+public class PaginationDTO<T> {
+    private List<T> data;
 
     private boolean showPrevious;
     private boolean showFirstPage;

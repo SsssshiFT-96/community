@@ -5,7 +5,6 @@ import com.stndorm.community.dto.CommentDTOFromDB;
 import com.stndorm.community.dto.ResultDTO;
 import com.stndorm.community.emus.CommentTypeEnum;
 import com.stndorm.community.exception.CustomizeErrorCode;
-import com.stndorm.community.mapper.CommentMapper;
 import com.stndorm.community.model.Comment;
 import com.stndorm.community.model.User;
 import com.stndorm.community.service.CommentService;
@@ -15,9 +14,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
+
 import java.util.List;
-import java.util.Map;
+
 
 @Controller
 public class CommentController {
@@ -44,7 +43,7 @@ public class CommentController {
         comment.setGmtCreate(System.currentTimeMillis());
         comment.setGmtModified(comment.getGmtCreate());
         comment.setCommentator(user.getId());
-        commentService.insert(comment);
+        commentService.insert(comment, user);
         return ResultDTO.okOf();
     }
 

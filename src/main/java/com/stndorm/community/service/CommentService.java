@@ -2,12 +2,16 @@ package com.stndorm.community.service;
 
 import com.stndorm.community.dto.CommentDTOFromDB;
 import com.stndorm.community.emus.CommentTypeEnum;
+import com.stndorm.community.emus.NotificationStatusEnum;
+import com.stndorm.community.emus.NotificationTypeEnum;
 import com.stndorm.community.exception.CustomizeErrorCode;
 import com.stndorm.community.exception.CustomizeException;
 import com.stndorm.community.mapper.CommentMapper;
+import com.stndorm.community.mapper.NotificationMapper;
 import com.stndorm.community.mapper.QuestionMapper;
 import com.stndorm.community.mapper.UserMapper;
 import com.stndorm.community.model.Comment;
+import com.stndorm.community.model.Notification;
 import com.stndorm.community.model.Question;
 import com.stndorm.community.model.User;
 import org.springframework.beans.BeanUtils;
@@ -15,10 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.lang.reflect.Array;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class CommentService {
@@ -32,8 +34,11 @@ public class CommentService {
     @Autowired
     private UserMapper userMapper;
 
+    @Autowired
+    private NotificationMapper notificationMapper;
+
     @Transactional
-    public void insert(Comment comment) {
+    public void insert(Comment comment, User commentator) {
         //判断一些异常，如评论父类id是否存在，类型是否存在
         if(comment.getParentId() == null || comment.getParentId() == 0){
             throw new CustomizeException(CustomizeErrorCode.TARGET_PARAM_NOT_FOUND);
@@ -54,6 +59,26 @@ public class CommentService {
             //更新评论数
             dbComment.setCommentCount(1L);
             commentMapper.updateCommentCount(dbComment);
+
+            //获取二级评论的一级评论的问题
+            Question question = questionMapper.getById(dbComment.getParentId());
+            if(question == null){
+                throw new CustomizeException((CustomizeErrorCode.QUESTION_NOT_FOUND));
+            }
+            //创建通知并存入数据库
+            Notification notification = new Notification();
+            notification.setGmtCreate(System.currentTimeMillis());
+            notification.setType(NotificationTypeEnum.REPLY_COMMENT.getType());
+            //因为要保证点击回复通知跳转的id是问题的id
+//            notification.setOuterId(comment.getParentId());
+            notification.setOuterId(question.getId());
+            notification.setNotifier(comment.getCommentator());
+            notification.setStatus(NotificationStatusEnum.UNREAD.getStatus());
+            notification.setReceiver(dbComment.getCommentator());
+            notification.setNotifierName(commentator.getName());
+
+            notification.setOuterTitle(question.getTitle());
+            notificationMapper.insert(notification);
         }else{
             //回复问题
             Question question = questionMapper.getById(comment.getParentId());
@@ -64,6 +89,18 @@ public class CommentService {
             //更新评论数
             question.setCommentCount(1);
             questionMapper.updateCommentCount(question);
+            //创建通知并存入数据库
+            Notification notification = new Notification();
+            notification.setGmtCreate(System.currentTimeMillis());
+            notification.setType(NotificationTypeEnum.REPLY_QUESTION.getType());
+//            notification.setOuterId(comment.getParentId());
+            notification.setOuterId(question.getId());
+            notification.setNotifier(comment.getCommentator());
+            notification.setStatus(NotificationStatusEnum.UNREAD.getStatus());
+            notification.setReceiver(question.getCreator());
+            notification.setNotifierName(commentator.getName());
+            notification.setOuterTitle(question.getTitle());
+            notificationMapper.insert(notification);
         }
     }
 
