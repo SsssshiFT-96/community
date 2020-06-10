@@ -43,21 +43,25 @@
                            onclick="showSelectTag()" >
                     <div id="select-tag" class="publish-select-tag">
                         <!-- Nav tabs -->
+                        <!--th:class="${selectCategoryStat.first? 'active': ''}"这个来设置
+                        当点到文本框时，自动将第一个Nav和其内容显示-->
                         <ul class="nav nav-tabs" role="tablist">
-                            <li role="presentation" th:each="selectCategory: ${tags}">
+                            <li role="presentation" th:each="selectCategory,selectCategoryStat: ${tags}"
+                                th:class="${selectCategoryStat.first? 'active': ''}">
                                 <a th:href="${'#'+selectCategory.categoryName}" aria-controls="home" role="tab"
                                    data-toggle="tab" th:text="${selectCategory.categoryName}"></a>
                             </li>
                         </ul>
                         <!-- Tab panes -->
                         <div class="tab-content">
-                            <div role="tabpanel" class="tab-pane" th:id="${selectCategory.categoryName}"
-                                 th:each="selectCategory: ${tags}">
+                            <div role="tabpanel" th:id="${selectCategory.categoryName}"
+                                 th:each="selectCategory: ${tags}"
+                                 th:class="${selectCategoryStat.first? 'active tab-pane': 'tab-pane'}">
                                 <span>
                                     <span class="label label-warning" th:each="selectTag: ${selectCategory.tags}">
                                     <span class="glyphicon glyphicon-tags" onclick="selectTag(this)"
                                           th:data-tag="${selectTag}"
-                                          th:text="${selectTag}">
+                                          th:text="${' '+selectTag}">
                                     </span>
                                 </span>
                                 </span>
