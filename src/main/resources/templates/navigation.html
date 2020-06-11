@@ -16,9 +16,11 @@
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 
-                <form class="navbar-form navbar-left">
+                <!--添上action和method表明请求路径是"/"的get请求-->
+                <form class="navbar-form navbar-left" action="/" method="get">
                     <div class="form-group">
-                        <input type="text" class="form-control" placeholder="搜索话题">
+                        <!--加上name="search",将搜索框中的内容以名字为search返回-->
+                        <input type="text" class="form-control" name="search" placeholder="搜索话题">
                     </div>
                     <button type="submit" class="btn btn-default">搜索</button>
                 </form>

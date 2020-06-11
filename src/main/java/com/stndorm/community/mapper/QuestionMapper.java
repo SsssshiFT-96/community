@@ -19,13 +19,22 @@ public interface QuestionMapper {
     List<Question> selectQuestions(@Param(value = "offset") Integer offset,
                                    @Param(value = "size") Integer size);
 
+    @Select("select * from questions where title regexp #{regexpSearch} ORDER BY gmt_create DESC limit #{offset}, #{size}")
+    List<Question> selectQuestionsBySearch(@Param(value = "regexpSearch") String regexpSearch,
+                                           @Param(value = "offset") Integer offset,
+                                           @Param(value = "size") Integer size);
+
     @Select("select count(1) from questions")
     Integer count();
 
+    @Select("select count(1) from questions where title regexp #{regexpSearch}")
+    Integer countBySearch(@Param(value = "regexpSearch")String regexpSearch);
+    
     @Select("select * from questions where creator = #{userId} limit #{offset}, #{size}")
     List<Question> selectQuestionsByUserId(@Param(value = "userId")Integer userId,
                                          @Param(value = "offset")Integer offset,
                                          @Param(value = "size")Integer size);
+
 
     @Select("select count(1) from questions where creator = #{userId}")
     Integer countByUserId(@Param(value = "userId") Integer userId);
@@ -44,4 +53,7 @@ public interface QuestionMapper {
 
     @Select("select * from questions where id != #{id} and tag regexp #{tag}")
     List<Question> selectRelatedQ(Question question);
+
+
+
 }

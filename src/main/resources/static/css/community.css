@@ -113,3 +113,7 @@ span.active {
 span.icon:hover{
     color: #5cb85c;
 }
+.footer{
+    padding: 10px 25%;
+    color: #00aaaa;
+}

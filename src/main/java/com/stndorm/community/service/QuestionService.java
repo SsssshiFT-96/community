@@ -28,11 +28,22 @@ public class QuestionService {
     @Autowired
     UserMapper userMapper;
 
-    public PaginationDTO<QuestionDTO> selectQuestionDTOs(Integer page, Integer size) {
+    public PaginationDTO<QuestionDTO> selectQuestionDTOs(String search, Integer page, Integer size) {
         PaginationDTO<QuestionDTO> paginationDTO = new PaginationDTO<>();
         Integer totalPage;
-        //获取文章总数
-        Integer totalCount = questionMapper.count();
+        Integer totalCount;
+        String regexpSearch ="";
+        //判断search是否有内容，有的话就按search来查询
+        if(StringUtils.isNotBlank(search)){
+            String[] searches = StringUtils.split(search, " ");
+            //将标签变成“xx|xx|xx”的形式，这样sql可以用正则来获取相关问题
+            regexpSearch = Arrays.stream(searches).collect(Collectors.joining("|"));
+            totalCount = questionMapper.countBySearch(regexpSearch);
+        }else{
+            //获取文章总数
+            totalCount = questionMapper.count();
+        }
+
         //判断总共有几页
         if(totalCount % size == 0){
             totalPage = totalCount / size;
@@ -49,8 +60,15 @@ public class QuestionService {
 
         //偏移量计算
         Integer offset = size * (page - 1);
+        if(offset < 0) offset = 0;
 
-        List<Question> questions = questionMapper.selectQuestions(offset, size);
+        List<Question> questions;
+        if(StringUtils.isNotBlank(search)){
+            questions = questionMapper.selectQuestionsBySearch(regexpSearch,offset, size);
+        }else{
+            questions = questionMapper.selectQuestions(offset, size);
+        }
+
         List<QuestionDTO> questionDTOList = new ArrayList<>();
 
 
