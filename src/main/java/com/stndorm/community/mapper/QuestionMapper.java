@@ -59,4 +59,7 @@ public interface QuestionMapper {
 
     @Select("select * from questions ORDER BY gmt_create DESC")
     List<Question> selectQuestions2();
+
+    @Select("select * from questions where tag regexp #{regexpTag} ORDER BY gmt_create DESC")
+    List<Question> selectQuestionsByTag2(@Param(value = "regexpTag")String regexpTag);
 }

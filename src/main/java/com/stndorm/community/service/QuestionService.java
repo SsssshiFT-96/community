@@ -90,17 +90,25 @@ public class QuestionService {
 //    }
 
 
-    public PageHelperDTO<QuestionDTO> selectQuestionDTOs(String search, Integer page, Integer size) {
+    public PageHelperDTO<QuestionDTO> selectQuestionDTOs(String search, String tag, Integer page, Integer size) {
         PageHelperDTO<QuestionDTO> pageHelperDTO = new PageHelperDTO<>();
-        String regexpSearch ="";
+        String regexpSearch = "";
+        String regexpTag = "";
         List<Question> questions;
         PageInfo<Question> info;
-        if(StringUtils.isNotBlank(search)){
+        if (StringUtils.isNotBlank(search)) {
             String[] searches = StringUtils.split(search, " ");
             //将标签变成“xx|xx|xx”的形式，这样sql可以用正则来获取相关问题
             regexpSearch = Arrays.stream(searches).collect(Collectors.joining("|"));
             PageHelper.startPage(page, size);
             questions = questionMapper.selectQuestionsBySearch2(regexpSearch);
+            info = new PageInfo<>(questions, 5);
+        }else if(StringUtils.isNotBlank(tag)){
+            String[] tags = StringUtils.split(tag, " ");
+            //将标签变成“xx|xx|xx”的形式，这样sql可以用正则来获取相关问题
+            regexpTag = Arrays.stream(tags).collect(Collectors.joining("|"));
+            PageHelper.startPage(page, size);
+            questions = questionMapper.selectQuestionsByTag2(regexpTag);
             info = new PageInfo<>(questions, 5);
         }else{
             PageHelper.startPage(page, size);
