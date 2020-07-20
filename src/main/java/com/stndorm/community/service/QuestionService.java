@@ -1,6 +1,9 @@
 package com.stndorm.community.service;
 
 import com.fasterxml.jackson.databind.util.BeanUtil;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.stndorm.community.dto.PageHelperDTO;
 import com.stndorm.community.dto.PaginationDTO;
 import com.stndorm.community.dto.QuestionDTO;
 import com.stndorm.community.exception.CustomizeErrorCode;
@@ -28,51 +31,86 @@ public class QuestionService {
     @Autowired
     UserMapper userMapper;
 
-    public PaginationDTO<QuestionDTO> selectQuestionDTOs(String search, Integer page, Integer size) {
-        PaginationDTO<QuestionDTO> paginationDTO = new PaginationDTO<>();
-        Integer totalPage;
-        Integer totalCount;
-        String regexpSearch ="";
+//    public PaginationDTO<QuestionDTO> selectQuestionDTOs(String search, Integer page, Integer size) {
+//        PaginationDTO<QuestionDTO> paginationDTO = new PaginationDTO<>();
+//        Integer totalPage;
+//        Integer totalCount;
+//        String regexpSearch ="";
         //判断search是否有内容，有的话就按search来查询
+//        if(StringUtils.isNotBlank(search)){
+//            String[] searches = StringUtils.split(search, " ");
+//            //将标签变成“xx|xx|xx”的形式，这样sql可以用正则来获取相关问题
+//            regexpSearch = Arrays.stream(searches).collect(Collectors.joining("|"));
+//            totalCount = questionMapper.countBySearch(regexpSearch);
+//        }else{
+//            //获取文章总数
+//            totalCount = questionMapper.count();
+//        }
+//
+//        //判断总共有几页
+//        if(totalCount % size == 0){
+//            totalPage = totalCount / size;
+//        }else{
+//            totalPage = totalCount / size + 1;
+//        }
+//
+//        //判断请求参数page是否合规，不合规就使它变为边界值
+//        if(page < 1) page = 1;
+//        if(page > totalPage)
+//            page = totalPage;
+//        //对paginationDTO进行赋值
+//        paginationDTO.setPagination(totalPage, page);
+
+//        //偏移量计算
+//        Integer offset = size * (page - 1);
+//        if(offset < 0) offset = 0;
+
+//        List<Question> questions;
+//        if(StringUtils.isNotBlank(search)){
+//            questions = questionMapper.selectQuestionsBySearch(regexpSearch,offset, size);
+//        }else{
+//            questions = questionMapper.selectQuestions(offset, size);
+//        }
+
+//        List<QuestionDTO> questionDTOList = new ArrayList<>();
+//
+//
+//        for(Question question : questions){
+//            User user = userMapper.findById(question.getCreator());
+//            //利用该方法可以将一个对象的属性复制到另一个对象的属性
+//            QuestionDTO questionDTO = new QuestionDTO();
+//            BeanUtils.copyProperties(question,questionDTO);
+//            questionDTO.setUser(user);
+//            questionDTOList.add(questionDTO);
+//        }
+//
+//        paginationDTO.setData(questionDTOList);
+//
+//        return paginationDTO;
+//    }
+
+
+    public PageHelperDTO<QuestionDTO> selectQuestionDTOs(String search, Integer page, Integer size) {
+        PageHelperDTO<QuestionDTO> pageHelperDTO = new PageHelperDTO<>();
+        String regexpSearch ="";
+        List<Question> questions;
+        PageInfo<Question> info;
         if(StringUtils.isNotBlank(search)){
             String[] searches = StringUtils.split(search, " ");
             //将标签变成“xx|xx|xx”的形式，这样sql可以用正则来获取相关问题
             regexpSearch = Arrays.stream(searches).collect(Collectors.joining("|"));
-            totalCount = questionMapper.countBySearch(regexpSearch);
+            PageHelper.startPage(page, size);
+            questions = questionMapper.selectQuestionsBySearch2(regexpSearch);
+            info = new PageInfo<>(questions, 5);
         }else{
-            //获取文章总数
-            totalCount = questionMapper.count();
+            PageHelper.startPage(page, size);
+            questions = questionMapper.selectQuestions2();
+            info = new PageInfo<>(questions, 5);
         }
-
-        //判断总共有几页
-        if(totalCount % size == 0){
-            totalPage = totalCount / size;
-        }else{
-            totalPage = totalCount / size + 1;
-        }
-
-        //判断请求参数page是否合规，不合规就使它变为边界值
-        if(page < 1) page = 1;
-        if(page > totalPage)
-            page = totalPage;
-        //对paginationDTO进行赋值
-        paginationDTO.setPagination(totalPage, page);
-
-        //偏移量计算
-        Integer offset = size * (page - 1);
-        if(offset < 0) offset = 0;
-
-        List<Question> questions;
-        if(StringUtils.isNotBlank(search)){
-            questions = questionMapper.selectQuestionsBySearch(regexpSearch,offset, size);
-        }else{
-            questions = questionMapper.selectQuestions(offset, size);
-        }
+        pageHelperDTO.setInfo(info);
 
         List<QuestionDTO> questionDTOList = new ArrayList<>();
-
-
-        for(Question question : questions){
+        for(Question question : info.getList()){
             User user = userMapper.findById(question.getCreator());
             //利用该方法可以将一个对象的属性复制到另一个对象的属性
             QuestionDTO questionDTO = new QuestionDTO();
@@ -80,10 +118,8 @@ public class QuestionService {
             questionDTO.setUser(user);
             questionDTOList.add(questionDTO);
         }
-
-        paginationDTO.setData(questionDTOList);
-
-        return paginationDTO;
+        pageHelperDTO.setData(questionDTOList);
+        return  pageHelperDTO;
     }
 
     public PaginationDTO<QuestionDTO> selectQuestionDTOsByUser(Integer userId, Integer page, Integer size) {

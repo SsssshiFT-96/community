@@ -54,6 +54,9 @@ public interface QuestionMapper {
     @Select("select * from questions where id != #{id} and tag regexp #{tag}")
     List<Question> selectRelatedQ(Question question);
 
+    @Select("select * from questions where title regexp #{regexpSearch} ORDER BY gmt_create DESC")
+    List<Question> selectQuestionsBySearch2(@Param(value = "regexpSearch")String regexpSearch);
 
-
+    @Select("select * from questions ORDER BY gmt_create DESC")
+    List<Question> selectQuestions2();
 }
