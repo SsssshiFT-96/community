@@ -29,7 +29,7 @@ public class IndexController {
     public String hello(HttpServletRequest request,
                         Model model,
                         @RequestParam(name="page", defaultValue = "1")Integer page,
-                        @RequestParam(name="size", defaultValue = "5")Integer size,
+                        @RequestParam(name="size", defaultValue = "8")Integer size,
                         @RequestParam(name="search", required = false)String search,
                         @RequestParam(name="tag", required = false)String tag){
         //获取cookie,并判断是否存在token，若存在则从数据库中查询用户，这里交给拦截器去做，因为很多controller都需要这一操作

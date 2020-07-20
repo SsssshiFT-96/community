@@ -1,9 +1,10 @@
 body{
     background-color: #efefef;
+    background-image: url("/img/background1.jpg");
 }
 .main{
     background-color: white;
-    margin: 40px;
+    margin: 40px 150px;
 }
 
 .btn-info{
@@ -115,5 +116,6 @@ span.icon:hover{
 }
 .footer{
     padding: 10px 25%;
-    color: #00aaaa;
+    color: #000088;
+    text-align: center;
 }

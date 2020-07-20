@@ -29,7 +29,7 @@ public class ProfileController {
                           Model model,
                           HttpServletRequest request,
                           @RequestParam(name="page", defaultValue = "1")Integer page,
-                          @RequestParam(name="size", defaultValue = "5")Integer size){
+                          @RequestParam(name="size", defaultValue = "8")Integer size){
         //当直接访问我的问题页面时也有用户登录信息，交给拦截器去做
         User user = (User)request.getSession().getAttribute("user");
         //如果没有登录就返回首页

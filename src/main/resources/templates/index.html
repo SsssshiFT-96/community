@@ -111,7 +111,7 @@
                         <span th:text="${question.viewCount}"></span>次浏览·
                         <span th:text="${#dates.format(question.getGmtCreate(),'yyyy-MM-dd HH:mm')}"></span>
                     </span>
-
+                    <hr style="margin-top: 5px; margin-bottom: 5px;">
                 </div>
             </div>
             <nav aria-label="Page navigation">
@@ -144,14 +144,24 @@
                 </ul>
             </nav>
         </div>
+
         <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
-            <h3>热门话题</h3>
-            <ul class="question-related">
-                <li th:each="tag:${tags}" style="font-size: 16px">
-                    <a th:href="@{/(page=1,search=${search},tag=${tag})}"
-                       th:text="${tag}"></a>
-                </li>
-            </ul>
+            <!--美图-->
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <h4 style="margin-top: 35px">请注意！！！</h4>
+                <img class="img-thumbnail question-tupian" src="/img/18jin.png">
+            </div>
+            <hr class="col-lg-11 col-md-12 col-sm-12 col-xs-12">
+
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <h3>热门话题</h3>
+                <ul class="question-related">
+                    <li th:each="tag:${tags}" style="font-size: 16px">
+                        <a th:href="@{/(page=1,search=${search},tag=${tag})}"
+                           th:text="${tag}"></a>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>
