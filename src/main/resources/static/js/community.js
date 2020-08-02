@@ -85,10 +85,10 @@ function collapseComments(e) {
             e.setAttribute("data-collapse","in");
             e.classList.add("active");
         }else{
-
+            //发出get请求，然后将返回的数据存在data中。
             $.getJSON( "/comment/"+id, function(data) {
                 console.log(data);
-                //开始绘制二级评论界面（不在html中绘制）
+                //从data获取数据，开始绘制二级评论界面（不在html中绘制）
 
                 $.each(data.data.reverse(), function(index,comment) {
 

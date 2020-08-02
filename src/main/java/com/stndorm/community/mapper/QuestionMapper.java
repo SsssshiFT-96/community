@@ -30,7 +30,7 @@ public interface QuestionMapper {
     @Select("select count(1) from questions where title regexp #{regexpSearch}")
     Integer countBySearch(@Param(value = "regexpSearch")String regexpSearch);
     
-    @Select("select * from questions where creator = #{userId} limit #{offset}, #{size}")
+    @Select("select * from questions where creator = #{userId} ORDER BY gmt_create DESC limit #{offset}, #{size}")
     List<Question> selectQuestionsByUserId(@Param(value = "userId")Integer userId,
                                          @Param(value = "offset")Integer offset,
                                          @Param(value = "size")Integer size);
