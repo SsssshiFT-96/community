@@ -9,7 +9,9 @@ import java.util.List;
 @Mapper
 public interface QuestionMapper {
 
+    //返回自增主键的值，即id的值
     @Insert("insert into questions (title,description,gmt_create,gmt_modified,creator,tag) values (#{title},#{description},#{gmtCreate},#{gmtModified},#{creator},#{tag})")
+    @Options(useGeneratedKeys = true, keyProperty = "id")
     public void create(Question quesion);
 
 //    @Select("select * from questions")

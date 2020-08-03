@@ -6,6 +6,9 @@ import com.github.pagehelper.PageInfo;
 import com.stndorm.community.dto.PageHelperDTO;
 import com.stndorm.community.dto.PaginationDTO;
 import com.stndorm.community.dto.QuestionDTO;
+//import com.stndorm.community.elasticsearch.ESMapper;
+import com.stndorm.community.elasticsearch.ESMapper;
+import com.stndorm.community.elasticsearch.ESService;
 import com.stndorm.community.exception.CustomizeErrorCode;
 import com.stndorm.community.exception.CustomizeException;
 import com.stndorm.community.mapper.QuestionMapper;
@@ -30,6 +33,8 @@ public class QuestionService {
     QuestionMapper questionMapper;
     @Autowired
     UserMapper userMapper;
+    @Autowired
+    ESService esService;
 
 //    public PaginationDTO<QuestionDTO> selectQuestionDTOs(String search, Integer page, Integer size) {
 //        PaginationDTO<QuestionDTO> paginationDTO = new PaginationDTO<>();
@@ -101,7 +106,9 @@ public class QuestionService {
             //将标签变成“xx|xx|xx”的形式，这样sql可以用正则来获取相关问题
             regexpSearch = Arrays.stream(searches).collect(Collectors.joining("|"));
             PageHelper.startPage(page, size);
-            questions = questionMapper.selectQuestionsBySearch2(regexpSearch);
+//            questions = questionMapper.selectQuestionsBySearch2(regexpSearch);
+            //使用elasticsearch搜索
+            questions = esService.findQuestionByESBySearch(search);
             info = new PageInfo<>(questions, 5);
         }else if(StringUtils.isNotBlank(tag)){
             String[] tags = StringUtils.split(tag, " ");
@@ -186,7 +193,7 @@ public class QuestionService {
         return questionDTO;
     }
 
-    public void createOrUpdate(Question question) {
+    public Integer createOrUpdate(Question question) {
         if(question.getId() == null){
             //新建问题，创建
             question.setGmtCreate(System.currentTimeMillis());
@@ -197,6 +204,7 @@ public class QuestionService {
             question.setGmtModified(System.currentTimeMillis());
             questionMapper.update(question);
         }
+        return question.getId();
     }
 
     public void incView(Integer id) {

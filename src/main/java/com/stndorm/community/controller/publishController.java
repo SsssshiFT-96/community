@@ -5,6 +5,8 @@ import com.stndorm.community.dto.QuestionDTO;
 import com.stndorm.community.mapper.QuestionMapper;
 import com.stndorm.community.model.Question;
 import com.stndorm.community.model.User;
+import com.stndorm.community.rabbitmq.ESMessage;
+import com.stndorm.community.rabbitmq.MQSender;
 import com.stndorm.community.service.QuestionService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,9 @@ public class publishController {
 
     @Autowired
     private QuestionService questionService;
+
+    @Autowired
+    private MQSender mqSender;
 
     //编辑功能
     @GetMapping("publish/{id}")
@@ -93,8 +98,12 @@ public class publishController {
         //将id作为唯一标识判断该问题新建还是已有。若为新建，则id传入的是空值
         question.setId(id);
 
-        questionService.createOrUpdate(question);
+        //获得添加或者更新的问题的id
+        Integer returnID = questionService.createOrUpdate(question);
 //        questionMapper.create(question);
+        //将更新信息通过mq异步通知去更新es
+        ESMessage esMessage = new ESMessage(returnID, ESMessage.CREATE_OR_UPDATE);
+        mqSender.sendUpdateESMsg(esMessage);
 
         //发布成功就返回首页
         return "redirect:/";

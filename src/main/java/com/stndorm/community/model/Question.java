@@ -1,6 +1,10 @@
 package com.stndorm.community.model;
 
-public class Question {
+import lombok.ToString;
+
+@ToString
+public class
+Question {
     private Integer id;
     private String title;
     private String description;
